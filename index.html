@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script type="text/javascript" src="webcam.min.js"></script>
+    <style>
+      #my_camera {
+        width: 320px;
+        height: 240px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="my_camera"></div>
+    <input type="button" value="Take Snapshot" onClick="take_snapshot()" />
+
+    <div id="results"></div>
+    <script language="JavaScript">
+      // Configure a few settings and attach camera
+      Webcam.set({
+        width: 320,
+        height: 240,
+        image_format: 'jpeg',
+        jpeg_quality: 90,
+        upload_name: 'file',
+      })
+      Webcam.attach('#my_camera')
+
+      // preload shutter audio clip
+
+      function take_snapshot() {
+
+        // take snapshot and get image data
+        Webcam.snap(function (data_uri) {
+          // display results in page
+          document.getElementById('results').innerHTML =
+            '<img id="imageprev" src="' + data_uri + '"/>'
+        })
+
+        var base64image = document.getElementById('imageprev').src
+        var xhr = new XMLHttpRequest()
+        var url = 'https://drowsinessapiproject.herokuapp.com/detect'
+        xhr.open('POST', url, true)
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.setRequestHeader("Access-Control-Allow-Origin","*")
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText)
+            console.log(json)
+          }
+        }
+        var data = JSON.stringify({ file: base64image })
+        xhr.send(data)
+      }
+    </script>
+  </body>
+</html>
+
+
