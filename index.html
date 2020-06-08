@@ -41,12 +41,14 @@
             '<img id="imageprev" src="' + data_uri + '"/>'
         })
 
-        var base64image = document.getElementById('imageprev').src
+        var base64image = document.getElementById('imageprev').src.split(',')[1]
+        console.log(base64image)
         var xhr = new XMLHttpRequest()
         var url = 'https://drowsinessapiproject.herokuapp.com/detect'
         xhr.open('POST', url, true)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.setRequestHeader("Access-Control-Allow-Origin","*")
+        xhr.withCredentials = true;
         xhr.onreadystatechange = function () {
           if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText)
